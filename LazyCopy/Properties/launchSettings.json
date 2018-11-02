@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LazyCopy": {
+      "commandName": "Project",
+      "commandLineArgs": "backup"
+    }
+  }
+}
