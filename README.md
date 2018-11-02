@@ -8,6 +8,6 @@ Functionaility Missing:
 * read and store paths somewhere else
 * no checking to make sure that all source and destination paths are created
 * not compareing zip file hashes to see if there are differences between the temp file (new file) and the destination file (previously saved)
-* no file management of deleting or moving temporary files, or moving the previously saved zip to the correct place
+* Backup historical files need a better date hash
 * encrypt files
 * restore functionality -- critical once encryption is used
