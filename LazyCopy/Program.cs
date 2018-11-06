@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace LazyCopy
 {
@@ -106,12 +107,13 @@ namespace LazyCopy
                     if (savedZips.Any(z => z.Contains(directoryName.Name + ".zip")))
                     {
                         //zip the folder into temp
+                        
                         ZipFile.CreateFromDirectory(d, temp_destination + "\\repo_" + directoryName.Name + ".zip");
                         //todo:encrypt temp zip files of the folders
 
                         //compare the temp zip to the saved zips hash value
                         File.Copy(destination + "\\repo_" + directoryName.Name + ".zip",
-                            destination + "\\backup\\repo_" + directoryName.Name + "_" + DateTime.UtcNow.GetHashCode() +
+                            destination + "\\backup\\repo_" + directoryName.Name + "_" + DateTime.UtcNow.ToFileTimeUtc().ToString() +
                             ".zip");
 
                         File.Copy(temp_destination + "\\repo_" + directoryName.Name + ".zip",
