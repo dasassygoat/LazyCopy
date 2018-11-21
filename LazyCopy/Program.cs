@@ -104,27 +104,36 @@ namespace LazyCopy
                 var directoryName = new DirectoryInfo(d);
                 try
                 {
+                    var tempFileLocation = temp_destination + "\\repo_" + directoryName.Name + ".zip";
+
+                    var backupFileLocation = destination + "\\backup\\repo_" + directoryName.Name + "-" + DateTime.Now.ToString("yyyyMMddHHmmssFFFF") +
+                            ".zip";
+                    var hasFileBeenHistoricalBackedupBefore = File.Exists(backupFileLocation);
+
+                    var recentBackupFileLocation = destination + "\\repo_" + directoryName.Name + ".zip";
+                    var hasFileBeenRecentBackedupBefore = File.Exists(recentBackupFileLocation);
+
                     if (savedZips.Any(z => z.Contains(directoryName.Name + ".zip")))
                     {
-                        //zip the folder into temp
                         
-                        ZipFile.CreateFromDirectory(d, temp_destination + "\\repo_" + directoryName.Name + ".zip");
-                        //todo:encrypt temp zip files of the folders
+                        ZipFile.CreateFromDirectory(d, tempFileLocation);
+                        var shaHashForTempFile = "1234";
+                        if (hasFileBeenRecentBackedupBefore)
+                        {
+                            var shaHashForRecent = "12345";
+                            if ((shaHashForTempFile == shaHashForRecent) ? false : true)
+                            {
+                                File.Copy(recentBackupFileLocation, backupFileLocation);
+                                File.Copy(tempFileLocation,recentBackupFileLocation, true);
+                            }
+                        }
 
-                        //compare the temp zip to the saved zips hash value
-                        File.Copy(destination + "\\repo_" + directoryName.Name + ".zip",
-                            destination + "\\backup\\repo_" + directoryName.Name + "_" + DateTime.UtcNow.ToFileTimeUtc().ToString() +
-                            ".zip");
-
-                        File.Copy(temp_destination + "\\repo_" + directoryName.Name + ".zip",
-                            destination + "\\repo_" + directoryName.Name + ".zip", true);
-
-                        File.Delete(temp_destination + "\\repo_" + directoryName.Name + ".zip");
+                        File.Delete(tempFileLocation);
                     }
                     else
                     {
-                        ZipFile.CreateFromDirectory(d, destination + "\\repo_" + directoryName.Name + ".zip");
-                        //todo:encrypt
+                        ZipFile.CreateFromDirectory(d, recentBackupFileLocation);
+
                     }
                 }
                 catch (IOException ex)
