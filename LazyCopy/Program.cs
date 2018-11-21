@@ -3,7 +3,9 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
+using ChecksumEncoder;
 
 namespace LazyCopy
 {
@@ -117,10 +119,18 @@ namespace LazyCopy
                     {
                         
                         ZipFile.CreateFromDirectory(d, tempFileLocation);
-                        var shaHashForTempFile = "1234";
+                        var tempFile = new FileInfo(tempFileLocation);
+                        var format = "X2";
+                        var sha256Temp = new SHA256Managed();
+                        var shaHashForTempFile = "";
+                        ChecksumEncoder.Encoder.EncodeFile<SHA256>(sha256Temp,tempFile,out shaHashForTempFile, format);
+
                         if (hasFileBeenRecentBackedupBefore)
                         {
-                            var shaHashForRecent = "12345";
+                            var shaHashForRecent = "";
+                            var sha256Recent = new SHA256Managed();
+                            var recentFile = new FileInfo(recentBackupFileLocation);
+                            ChecksumEncoder.Encoder.EncodeFile<SHA256>(sha256Recent, recentFile, out shaHashForRecent, format);
                             if ((shaHashForTempFile == shaHashForRecent) ? false : true)
                             {
                                 File.Copy(recentBackupFileLocation, backupFileLocation);
